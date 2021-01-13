@@ -26,8 +26,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.jetbrains:annotations:19.0.0'
 	//implementation 'org.liquibase:liquibase-core'
 	compileOnly 'org.projectlombok:lombok'
+
+	compile group: 'com.google.guava', name: 'guava', version: '30.1-jre'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+	compile group: 'commons-validator', name: 'commons-validator', version: '1.7'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'io.r2dbc:r2dbc-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'

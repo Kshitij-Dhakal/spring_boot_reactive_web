@@ -14,7 +14,7 @@ public class UserController {
     private UserDetailService userService;
 
     @PostMapping("signup")
-    public Mono<User> signUp(@RequestBody User user) {
+    public Mono<?> signUp(@RequestBody User user) {
         return userService.signUp(user);
     }
 }
