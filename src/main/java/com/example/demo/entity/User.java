@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +38,14 @@ public class User implements Persistable<String> {
             return true;
         }
         return false;
+    }
+
+    public User(User user) {
+        this.id = user.id;
+        this.fullName = user.fullName;
+        this.email = user.email;
+        this.password = user.password;
+        this.created = user.created;
+        this.updated = user.updated;
     }
 }

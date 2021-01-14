@@ -23,4 +23,8 @@ public class Lang {
     public static boolean isBlank(String str) {
         return StringUtils.isBlank(str);
     }
+
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
 }

@@ -1,6 +1,6 @@
-package com.example.demo.controller;
+package com.example.demo.api.controller;
 
-import com.example.demo.model.Greeting;
+import com.example.demo.entity.Greeting;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

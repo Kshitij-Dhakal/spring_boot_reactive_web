@@ -1,13 +1,16 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.User;
 import com.example.demo.exceptions.DuplicateResourceException;
 import com.example.demo.exceptions.InvalidRequestException;
-import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 import static com.example.demo.utility.Lang.isBlank;
 import static com.example.demo.utility.Lang.sanitizeText;
@@ -15,15 +18,14 @@ import static com.example.demo.utility.Utility.nanos;
 import static com.example.demo.utility.Validator.isValidEmail;
 
 @Service
+@RequiredArgsConstructor
 public class UserDetailService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Mono<?> signUp(User user) {
         String email = sanitizeText(user.getEmail());
-        return userRepository.findByEmail(email)
+        return findByEmail(email)
                 .flatMap(__ -> Mono.error(new DuplicateResourceException("Email already exists")))
                 .switchIfEmpty(Mono.defer(() -> {
                     String fullName = sanitizeText(user.getFullName());
@@ -42,12 +44,20 @@ public class UserDetailService {
                             .created(nanos())
                             .updated(nanos())
                             .build();
-                    return userRepository.save(build);
+                    return userRepository.save(build)
+                            .map(clearPassword());
                 }));
+    }
+
+    @NotNull
+    private Function<User, User> clearPassword() {
+        return u -> {
+            u.setPassword("");
+            return u;
+        };
     }
 
     public Mono<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
 }
