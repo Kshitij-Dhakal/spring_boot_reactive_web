@@ -37,6 +37,13 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(JwtExpiredExpiration.class)
+    public ResponseEntity<?> tokenExpired(JwtExpiredExpiration ex) {
+        Map<String, Object> error = error();
+        error.put("message", "Token expired");
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     private Map<String, Object> error() {
         Map<String, Object> map = Maps.newLinkedHashMap();
         map.put("error", true);
