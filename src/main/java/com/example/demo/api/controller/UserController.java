@@ -1,7 +1,6 @@
 package com.example.demo.api.controller;
 
-import com.example.demo.api.model.LoginRequest;
-import com.example.demo.entity.User;
+import com.example.demo.api.model.SignUpRequest;
 import com.example.demo.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,7 @@ public class UserController {
     private UserDetailService userService;
 
     @PostMapping("signup")
-    public Mono<?> signUp(@RequestBody User user) {
+    public Mono<?> signUp(@RequestBody SignUpRequest user) {
         return userService.signUp(user);
     }
 }
