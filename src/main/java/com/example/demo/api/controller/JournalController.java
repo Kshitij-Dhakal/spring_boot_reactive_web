@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -27,6 +25,17 @@ public class JournalController {
                 .flatMap(o -> {
                     User user = (User) o;
                     return journalService.save(user, journalModel);
+                });
+    }
+
+    @GetMapping("/my")
+    public Flux<?> getMyJournal() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(Authentication::getPrincipal)
+                .flatMapMany(o -> {
+                    User user = (User) o;
+                    return journalService.getMyJournal(user);
                 });
     }
 }

@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authorizeExchange()
-                .pathMatchers("/auth/**").permitAll()
+                .pathMatchers("/auth/**", "/signup").permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .addFilterAt(new JwtTokenAuthorizationFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
