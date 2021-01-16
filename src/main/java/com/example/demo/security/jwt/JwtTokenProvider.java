@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 
@@ -52,6 +53,18 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String createRefreshToken(Map<String, Object> claims, String subject) {
+        Date iat = new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(iat)
+                .setExpiration(new Date(iat.getTime() + jwtProperties.getRefreshExpirationInMs()))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+
     }
 
     public Authentication getAuthentication(String token) {

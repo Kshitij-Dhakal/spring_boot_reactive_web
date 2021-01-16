@@ -13,4 +13,6 @@ public class JwtProperties {
     private String secretKey;
     @Value("${jwt.validity.in.millis:3600000}")
     private long validityInMs;
+    @Value("${jwt.refresh.expiration.in.millis:8640000000}")
+    private long refreshExpirationInMs;
 }

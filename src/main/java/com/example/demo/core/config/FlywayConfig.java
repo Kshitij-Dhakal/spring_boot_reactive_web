@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.core.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;

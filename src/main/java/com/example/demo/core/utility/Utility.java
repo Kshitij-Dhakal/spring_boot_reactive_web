@@ -1,4 +1,4 @@
-package com.example.demo.utility;
+package com.example.demo.core.utility;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.example.demo.exceptions;
+package com.example.demo.core.exceptions;
 
 import com.google.common.collect.Maps;
 import org.springframework.core.Ordered;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
-import static com.example.demo.utility.Utility.timestamp;
+import static com.example.demo.core.utility.Utility.timestamp;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)

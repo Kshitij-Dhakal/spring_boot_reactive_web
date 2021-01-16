@@ -1,6 +1,5 @@
-package com.example.demo.utility;
+package com.example.demo.core.utility;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class Validator {

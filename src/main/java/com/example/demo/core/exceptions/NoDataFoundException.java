@@ -1,4 +1,4 @@
-package com.example.demo.exceptions;
+package com.example.demo.core.exceptions;
 
 public class NoDataFoundException extends ControllerException {
     public NoDataFoundException(String message) {

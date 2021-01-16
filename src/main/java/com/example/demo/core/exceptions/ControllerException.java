@@ -1,4 +1,4 @@
-package com.example.demo.exceptions;
+package com.example.demo.core.exceptions;
 
 public class ControllerException extends RuntimeException {
     private final String message;

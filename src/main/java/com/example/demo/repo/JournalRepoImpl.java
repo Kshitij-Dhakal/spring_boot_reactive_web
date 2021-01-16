@@ -1,16 +1,21 @@
 package com.example.demo.repo;
 
+import com.example.demo.api.model.Page;
 import com.example.demo.entity.Journal;
+import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
 import io.r2dbc.spi.Row;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
+
+import static com.example.demo.api.model.Page.map;
+import static com.example.demo.core.repo.SqlRepo.count;
+import static com.example.demo.core.repo.SqlRepo.getQuery;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,12 +46,27 @@ public class JournalRepoImpl implements JournalRepo {
     }
 
     @Override
-    public Flux<Journal> findByUser(User user) {
-        final var query = "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId";
+    public Mono<Page<?>> findByUser(User user, PageRequest pageRequest) {
+        final var countQuery = "SELECT COUNT(*) FROM journal WHERE user_id=:userId";
+        final var query = getQuery(pageRequest, "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId ORDER BY created %s LIMIT :limit OFFSET :offset");
+        Mono<Long> count = client.sql(countQuery)
+                .bind("userId", user.getId())
+                .map(count())
+                .first();
         return client.sql(query)
                 .bind("userId", user.getId())
+                .bind("limit", pageRequest.getPageSize())
+                .bind("offset", pageRequest.getPageNumber())
                 .map(JournalRowMapper())
-                .all();
+                .all()
+                .collectList()
+                .flatMap(journals ->
+                        count.map(total -> Page.builder()
+                                .pageNumber(pageRequest.getPageNumber())
+                                .pageSize(pageRequest.getPageSize())
+                                .total(total)
+                                .data(map(journals))
+                                .build()));
     }
 
     @NotNull

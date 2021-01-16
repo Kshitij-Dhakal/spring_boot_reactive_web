@@ -1,7 +1,9 @@
 package com.example.demo.api.controller;
 
 import com.example.demo.api.model.JournalModel;
+import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
+import com.example.demo.enums.Order;
 import com.example.demo.service.JournalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,13 +31,21 @@ public class JournalController {
     }
 
     @GetMapping("/my")
-    public Flux<?> getMyJournal() {
+    public Flux<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") long pageNumber,
+                                @RequestParam(value = "pageSize", defaultValue = "10") long pageSize,
+                                @RequestParam(value = "order", defaultValue = "DESC") Order order,
+                                @RequestParam(value = "orderBy", defaultValue = "created") String sortBy) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
                 .flatMapMany(o -> {
                     User user = (User) o;
-                    return journalService.getMyJournal(user);
+                    return journalService.getMyJournal(user, PageRequest.builder()
+                            .pageNumber(pageNumber)
+                            .pageSize(pageSize)
+                            .order(order)
+                            .orderBy(sortBy)
+                            .build());
                 });
     }
 }

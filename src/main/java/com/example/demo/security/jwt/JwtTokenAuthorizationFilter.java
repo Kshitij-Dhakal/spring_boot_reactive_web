@@ -12,7 +12,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import static com.example.demo.utility.Lang.isNotBlank;
+import static com.example.demo.core.utility.Lang.isNotBlank;
 
 @RequiredArgsConstructor
 public class JwtTokenAuthorizationFilter implements WebFilter {
