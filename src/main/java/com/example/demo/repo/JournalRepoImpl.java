@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 import static com.example.demo.api.model.Page.map;
 import static com.example.demo.core.repo.SqlRepo.count;
-import static com.example.demo.core.repo.SqlRepo.getQuery;
+import static com.example.demo.core.repo.SqlRepo.getOrderByQuery;
 
 @Repository
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class JournalRepoImpl implements JournalRepo {
     @Override
     public Mono<Page<?>> findByUser(User user, PageRequest pageRequest) {
         final var countQuery = "SELECT COUNT(*) FROM journal WHERE user_id=:userId";
-        final var query = getQuery(pageRequest, "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId ORDER BY created %s LIMIT :limit OFFSET :offset");
+        final var query = getOrderByQuery(pageRequest, "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId ORDER BY %s %s LIMIT :limit OFFSET :offset");
         Mono<Long> count = client.sql(countQuery)
                 .bind("userId", user.getId())
                 .map(count())

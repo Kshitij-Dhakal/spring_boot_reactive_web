@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 
@@ -11,13 +14,22 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@Table("person")
 public class User {
+    @Id
+    @Column("id")
     private String id;
+    @Column("full_name")
     private String fullName;
+    @Column("email")
     private String email;
+    @Column("password")
     private String password;
+    @Column("profile_picture")
     private String profilePicture;
+    @Column("created")
     private Long created;
+    @Column("updated")
     private Long updated;
 
     private List<Journal> journalList;

@@ -19,7 +19,7 @@ public class SqlRepo {
     }
 
     @NotNull
-    public static String getQuery(PageRequest pageRequest, String query) {
-        return String.format(query, pageRequest.getOrder().name());
+    public static String getOrderByQuery(PageRequest pageRequest, String query) {
+        return String.format(query, pageRequest.getOrderBy(), pageRequest.getOrder().name());
     }
 }
