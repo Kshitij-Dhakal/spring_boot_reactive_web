@@ -20,7 +20,7 @@ public class JournalController {
     private JournalService journalService;
 
     @PostMapping("/new")
-    public Mono<?> save(@RequestBody JournalModel journalModel) {
+    public Mono<?> save(@RequestBody final JournalModel journalModel) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
@@ -31,10 +31,10 @@ public class JournalController {
     }
 
     @GetMapping("/my")
-    public Flux<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") long pageNumber,
-                                @RequestParam(value = "pageSize", defaultValue = "10") long pageSize,
-                                @RequestParam(value = "order", defaultValue = "DESC") Order order,
-                                @RequestParam(value = "orderBy", defaultValue = "created") String sortBy) {
+    public Flux<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") final long pageNumber,
+                                @RequestParam(value = "pageSize", defaultValue = "10") final long pageSize,
+                                @RequestParam(value = "order", defaultValue = "DESC") final Order order,
+                                @RequestParam(value = "orderBy", defaultValue = "created") final String sortBy) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)

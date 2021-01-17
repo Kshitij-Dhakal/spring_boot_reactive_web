@@ -6,6 +6,7 @@ import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
 import io.r2dbc.spi.Row;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
@@ -19,12 +20,14 @@ import static com.example.demo.core.repo.SqlRepo.getOrderByQuery;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class JournalRepoImpl implements JournalRepo {
 
     private final DatabaseClient client;
 
     @Override
     public Mono<Journal> save(User user, Journal journal) {
+        log.info("Saving journal for user. User id : {}", user.getId());
         final var query = "INSERT INTO journal (id, user_id, content, created, updated) VALUES(:id, :userId, :content, :created, :updated)";
         return client.sql(query)
                 .bind("id", journal.getId())
@@ -38,6 +41,7 @@ public class JournalRepoImpl implements JournalRepo {
 
     @Override
     public Mono<Journal> findById(String id) {
+        log.info("Getting journal by id. Id : {}", id);
         final var query = "SELECT id, user_id, content, created, updated FROM journal WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
@@ -47,6 +51,7 @@ public class JournalRepoImpl implements JournalRepo {
 
     @Override
     public Mono<Page<?>> findByUser(User user, PageRequest pageRequest) {
+        log.info("Getting journals for user. User id : {}", user.getId());
         final var countQuery = "SELECT COUNT(*) FROM journal WHERE user_id=:userId";
         final var query = getOrderByQuery(pageRequest, "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId ORDER BY %s %s LIMIT :limit OFFSET :offset");
         Mono<Long> count = client.sql(countQuery)

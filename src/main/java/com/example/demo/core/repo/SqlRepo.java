@@ -2,8 +2,8 @@ package com.example.demo.core.repo;
 
 import com.example.demo.entity.PageRequest;
 import io.r2dbc.spi.Row;
-import org.jetbrains.annotations.NotNull;
 
+import javax.validation.constraints.NotNull;
 import java.util.function.Function;
 
 public class SqlRepo {

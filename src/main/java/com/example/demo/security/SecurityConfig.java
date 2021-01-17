@@ -20,6 +20,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(final ServerHttpSecurity http,
                                                          final JwtTokenProvider tokenProvider) {
         return http
+                .cors().and()
                 .csrf().disable()
                 .httpBasic().disable()
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())

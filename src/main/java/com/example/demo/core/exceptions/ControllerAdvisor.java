@@ -41,7 +41,7 @@ public class ControllerAdvisor {
     public ResponseEntity<?> tokenExpired(JwtExpiredExpiration ex) {
         Map<String, Object> error = error();
         error.put("message", "Token expired");
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     private Map<String, Object> error() {
