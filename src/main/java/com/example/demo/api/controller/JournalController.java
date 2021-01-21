@@ -31,14 +31,14 @@ public class JournalController {
     }
 
     @GetMapping("/my")
-    public Flux<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") final long pageNumber,
+    public Mono<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") final long pageNumber,
                                 @RequestParam(value = "pageSize", defaultValue = "10") final long pageSize,
                                 @RequestParam(value = "order", defaultValue = "DESC") final Order order,
                                 @RequestParam(value = "orderBy", defaultValue = "created") final String sortBy) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
-                .flatMapMany(o -> {
+                .flatMap(o -> {
                     User user = (User) o;
                     return journalService.getMyJournal(user, PageRequest.builder()
                             .pageNumber(pageNumber)

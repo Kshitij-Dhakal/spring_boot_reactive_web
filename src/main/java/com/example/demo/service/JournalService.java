@@ -39,7 +39,7 @@ public class JournalService {
         return journalRepo.save(user, build);
     }
 
-    public Mono<Page<?>> getMyJournal(User user, PageRequest pageRequest) {
+    public Mono<?> getMyJournal(User user, PageRequest pageRequest) {
         log.info("Getting my journal. User id : {}", user.getId());
         return journalRepo.findByUser(user, pageRequest);
     }
