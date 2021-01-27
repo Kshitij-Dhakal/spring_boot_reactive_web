@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.api.model.JournalModel;
-import com.example.demo.api.model.Page;
 import com.example.demo.core.exceptions.InvalidRequestException;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repo.JournalRepo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,16 +19,16 @@ import static com.example.demo.core.utility.Utility.uuid;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class JournalService {
-    @Autowired
-    private JournalRepo journalRepo;
+    private final JournalRepo journalRepo;
 
-    public Mono<?> save(User user, JournalModel journalModel) {
+    public Mono<Journal> save(User user, JournalModel journalModel) {
         log.info("Saving journal. User id : {}", user.getId());
         Journal journal = journalModel.toJournal();
         String content = sanitizeDescription(journal.getContent());
         if (isBlank(content)) {
-            throw new InvalidRequestException("Invalid content.");
+            return Mono.error(new InvalidRequestException("Invalid content."));
         }
         Journal build = journal.toBuilder()
                 .id(uuid())

@@ -1,21 +1,27 @@
 package com.example.demo.repo;
 
-import com.google.common.collect.Maps;
+import com.example.demo.datasource.RedisSetImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 @Repository
+@RequiredArgsConstructor
 public class AuthRepoImpl implements AuthRepo {
-    Map<String, String> blackList = Maps.newHashMap();
+    private final RedisSetImpl redisSet;
 
     @Override
-    public void save(String key, String refreshToken) {
+    public Mono<Long> save(String accountId, String tokenId) {
+        return redisSet.add(accountId, tokenId);
     }
 
     @Override
-    public Mono<String> get(String key) {
-        return null;
+    public Mono<Long> removeToken(String accountId, String token) {
+        return redisSet.remove(accountId, token);
+    }
+
+    @Override
+    public Mono<Boolean> checkToken(String accountId, String tokenId) {
+        return redisSet.isMember(accountId, tokenId);
     }
 }

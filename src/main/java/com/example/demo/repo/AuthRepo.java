@@ -3,7 +3,9 @@ package com.example.demo.repo;
 import reactor.core.publisher.Mono;
 
 public interface AuthRepo {
-    void save(String key, String refreshToken);
+    Mono<Long> save(String accountId, String tokenId);
 
-    Mono<String> get(String key);
+    Mono<Long> removeToken(String accountId, String token);
+
+    Mono<Boolean> checkToken(String accountId, String tokenId);
 }

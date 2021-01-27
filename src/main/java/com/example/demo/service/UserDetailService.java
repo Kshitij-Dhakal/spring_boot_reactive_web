@@ -31,27 +31,31 @@ public class UserDetailService {
         String email = sanitizeText(user.getEmail());
         return findByEmail(email)
                 .flatMap(__ -> Mono.error(new DuplicateResourceException("Email already exists")))
-                .switchIfEmpty(Mono.defer(() -> {
-                    String fullName = sanitizeText(user.getFullName());
-                    if (isBlank(fullName) &&
-                            fullName.length() > 256) {
-                        return Mono.error(new InvalidRequestException("Invalid user name"));
-                    }
-                    if (isBlank(email) ||
-                            !isValidEmail(email)) {
-                        return Mono.error(new InvalidRequestException("Invalid email"));
-                    }
-                    User build = user.toBuilder()
-                            .id(uuid())
-                            .fullName(fullName)
-                            .email(email)
-                            .password(passwordEncoder.encode(user.getPassword()))
-                            .created(nanos())
-                            .updated(nanos())
-                            .build();
-                    return userRepository.save(build)
-                            .map(UserModel::fromUser);
-                }));
+                .switchIfEmpty(saveUser(user, email));
+    }
+
+    private Mono<UserModel> saveUser(User user, String email) {
+        return Mono.defer(() -> {
+            String fullName = sanitizeText(user.getFullName());
+            if (isBlank(fullName) &&
+                    fullName.length() > 256) {
+                return Mono.error(new InvalidRequestException("Invalid user name"));
+            }
+            if (isBlank(email) ||
+                    !isValidEmail(email)) {
+                return Mono.error(new InvalidRequestException("Invalid email"));
+            }
+            User build = user.toBuilder()
+                    .id(uuid())
+                    .fullName(fullName)
+                    .email(email)
+                    .password(passwordEncoder.encode(user.getPassword()))
+                    .created(nanos())
+                    .updated(nanos())
+                    .build();
+            return userRepository.save(build)
+                    .map(UserModel::fromUser);
+        });
     }
 
     public Mono<User> findByEmail(String email) {

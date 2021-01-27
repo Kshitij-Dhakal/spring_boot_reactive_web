@@ -3,6 +3,7 @@ package com.example.demo.security.jwt;
 import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,16 +18,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenProvider {
     private static final String AUTHORITIES_KEY = "roles";
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
     private SecretKey secretKey;
 
     @PostConstruct
@@ -53,18 +53,6 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public String createRefreshToken(Map<String, Object> claims, String subject) {
-        Date iat = new Date();
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(iat)
-                .setExpiration(new Date(iat.getTime() + jwtProperties.getRefreshExpirationInMs()))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
-
     }
 
     public Authentication getAuthentication(String token) {
