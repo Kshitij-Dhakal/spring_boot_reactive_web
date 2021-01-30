@@ -21,6 +21,8 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    private static final String ACCESS_TOKEN = "accessToken";
+    private static final String REFRESH_TOKEN = "refreshToken";
     private final AuthService authService;
 
     @PostMapping("/token")
@@ -29,8 +31,8 @@ public class AuthController {
                 .map(pair -> {
                             HttpHeaders httpHeaders = new HttpHeaders();
                             httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + pair.getLeft());
-                            var tokenBody = Map.of("token", pair.getLeft(),
-                                    "refreshToken", pair.getRight());
+                            var tokenBody = Map.of(ACCESS_TOKEN, pair.getLeft(),
+                                    REFRESH_TOKEN, pair.getRight());
                             return new ResponseEntity<>(tokenBody, httpHeaders, HttpStatus.OK);
                         }
                 );
@@ -43,7 +45,7 @@ public class AuthController {
                 .map(s -> {
                     HttpHeaders httpHeaders = new HttpHeaders();
                     httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + s);
-                    var tokenBody = Map.of("token", s);
+                    var tokenBody = Map.of(ACCESS_TOKEN, s);
                     return new ResponseEntity<>(tokenBody, httpHeaders, HttpStatus.OK);
                 });
     }
