@@ -4,6 +4,7 @@ import com.example.demo.api.model.LoginRequest;
 import com.example.demo.api.model.RefreshTokenRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.AuthService;
+import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class AuthController {
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String REFRESH_TOKEN = "refreshToken";
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/token")
     public Mono<ResponseEntity<?>> login(@Valid @RequestBody final Mono<LoginRequest> authRequest) {
@@ -38,10 +40,22 @@ public class AuthController {
                 );
     }
 
+    @GetMapping("/profile")
+    public Mono<User> getUserProfile() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(Authentication::getPrincipal)
+                .flatMap(o -> {
+                    User u = (User) o;
+                    String id = u.getId();
+                    return userService.findById(id);
+                });
+    }
+
     @GetMapping("/refresh")
-    public Mono<ResponseEntity<?>> refreshAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return authService.refreshAccessToken(refreshTokenRequest.getRefreshToken(),
-                refreshTokenRequest.getAccessToken())
+    public Mono<ResponseEntity<?>> refreshAccessToken(@RequestHeader("refreshToken") String refreshToken,
+                                                      @RequestHeader("Authorization") String bearerToken) {
+        return authService.refreshAccessToken(refreshToken, bearerToken)
                 .map(s -> {
                     HttpHeaders httpHeaders = new HttpHeaders();
                     httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + s);
@@ -51,13 +65,13 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public Mono<ResponseEntity<?>> logout(@RequestBody RefreshTokenRequest logoutRequest) {
+    public Mono<ResponseEntity<?>> logout(@RequestParam("refreshToken") String refreshToken) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
                 .flatMap(o -> {
                     User user = (User) o;
-                    return authService.logout(user.getId(), logoutRequest.getRefreshToken());
+                    return authService.logout(user.getId(), refreshToken);
                 })
                 .map(aBoolean -> {
                     var msg =

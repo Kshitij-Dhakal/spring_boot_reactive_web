@@ -5,6 +5,7 @@ import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Order;
 import com.example.demo.service.JournalService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -15,11 +16,11 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/journal")
+@RequiredArgsConstructor
 public class JournalController {
-    @Autowired
-    private JournalService journalService;
+    private final JournalService journalService;
 
-    @PostMapping("/new")
+    @PostMapping
     public Mono<?> save(@RequestBody final JournalModel journalModel) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)

@@ -5,7 +5,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -67,6 +66,23 @@ public class JwtTokenProvider {
                 .id((String) claims.get("id"))
                 .build();
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+    }
+
+    public Authentication getAuthenticationFromExpiredToken(final String token) {
+        log.info("Getting authentication from expired token");
+        try {
+            return getAuthentication(token);
+        } catch (ExpiredJwtException e) {
+            Claims claims = e.getClaims();
+            Collection<? extends GrantedAuthority> authorities = AuthorityUtils
+                    .commaSeparatedStringToAuthorityList(claims.get(AUTHORITIES_KEY)
+                            .toString());
+            User principal = User.builder()
+                    .email(claims.getSubject())
+                    .id((String) claims.get("id"))
+                    .build();
+            return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        }
     }
 
     public boolean validateToken(String token) {

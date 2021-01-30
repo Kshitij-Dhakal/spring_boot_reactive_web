@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -53,13 +52,17 @@ public class AuthService {
         };
     }
 
-    public Mono<String> refreshAccessToken(String refreshToken, String jwt) {
+    public Mono<String> refreshAccessToken(String refreshToken, String bearerToken) {
         log.info("Refresh access token request received.");
-        // get user id from jwt
+        // get user id from bearerToken
         // check if refresh token is valid from user id
-        // create new jwt
-        // return new jwt
-        Authentication auth = tokenProvider.getAuthentication(jwt);
+        // create new bearerToken
+        // return new bearerToken
+        if (!bearerToken.startsWith("Bearer ")) {
+            return Mono.error(new InvalidRequestException("Invalid bearer token"));
+        }
+        String accessToken = bearerToken.substring(7);
+        Authentication auth = tokenProvider.getAuthenticationFromExpiredToken(accessToken);
         User user = (User) auth.getPrincipal();
         String userId = user.getId();
         return authRepo.checkToken(userId, refreshToken)

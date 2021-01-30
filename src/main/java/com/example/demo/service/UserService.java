@@ -21,7 +21,7 @@ import static com.example.demo.core.utility.Validator.isValidEmail;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserDetailService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -61,5 +61,10 @@ public class UserDetailService {
     public Mono<User> findByEmail(String email) {
         log.info("Getting user by email. Email : {}", email);
         return userRepository.findByEmail(email);
+    }
+
+    public Mono<User> findById(String id) {
+        log.info("Getting user by id. User id : {}", id);
+        return userRepository.findById(id);
     }
 }

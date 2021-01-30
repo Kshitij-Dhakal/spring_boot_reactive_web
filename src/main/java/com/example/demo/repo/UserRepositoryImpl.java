@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
-                .map(UserRowMapper())
+                .map(userRowMapper())
                 .first();
     }
 
@@ -48,12 +48,12 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE email=:email";
         return client.sql(query)
                 .bind("email", email)
-                .map(UserRowMapper())
+                .map(userRowMapper())
                 .first();
     }
 
     @NotNull
-    private Function<Row, User> UserRowMapper() {
+    private Function<Row, User> userRowMapper() {
         return row -> User.builder()
                 .id((String) row.get("id"))
                 .fullName((String) row.get("full_name"))

@@ -14,7 +14,7 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class SecurityUserDetailService implements ReactiveUserDetailsService {
-    private final UserDetailService userDetailService;
+    private final UserService userDetailService;
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
