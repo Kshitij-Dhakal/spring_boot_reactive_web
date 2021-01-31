@@ -11,5 +11,5 @@ public interface JournalRepo {
 
     Mono<Journal> findById(String id);
 
-    Mono<Page<?>> findByUser(User user, PageRequest pageRequest);
+    Mono<Page<Journal>> findByUser(User user, PageRequest pageRequest);
 }

@@ -1,7 +1,6 @@
 package com.example.demo.api.controller;
 
 import com.example.demo.api.model.LoginRequest;
-import com.example.demo.api.model.RefreshTokenRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.UserService;
@@ -28,7 +27,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/token")
-    public Mono<ResponseEntity<?>> login(@Valid @RequestBody final Mono<LoginRequest> authRequest) {
+    public Mono<ResponseEntity<Map<String, ?>>> login(@Valid @RequestBody final Mono<LoginRequest> authRequest) {
         return authService.login(authRequest)
                 .map(pair -> {
                             HttpHeaders httpHeaders = new HttpHeaders();
@@ -53,8 +52,8 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public Mono<ResponseEntity<?>> refreshAccessToken(@RequestHeader("refreshToken") String refreshToken,
-                                                      @RequestHeader("Authorization") String bearerToken) {
+    public Mono<ResponseEntity<Map<String, ?>>> refreshAccessToken(@RequestHeader("refreshToken") String refreshToken,
+                                                                   @RequestHeader("Authorization") String bearerToken) {
         return authService.refreshAccessToken(refreshToken, bearerToken)
                 .map(s -> {
                     HttpHeaders httpHeaders = new HttpHeaders();
@@ -65,7 +64,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public Mono<ResponseEntity<?>> logout(@RequestParam("refreshToken") String refreshToken) {
+    public Mono<ResponseEntity<Map<String, ?>>> logout(@RequestParam("refreshToken") String refreshToken) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)

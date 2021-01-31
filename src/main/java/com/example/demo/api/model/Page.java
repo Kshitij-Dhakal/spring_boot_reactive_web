@@ -4,22 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
+@Accessors(chain = true)
 public class Page<T> {
     private long pageSize;
     private long pageNumber;
     private long total;
     private List<T> data;
-
-    public static <T> List<Object> map(List<T> tList) {
-        return tList.stream().map(t -> (Object) t).collect(toList());
-    }
 }

@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
-import static com.example.demo.api.model.Page.map;
 import static com.example.demo.core.repo.SqlRepo.count;
 import static com.example.demo.core.repo.SqlRepo.getOrderByQuery;
 
@@ -50,7 +49,7 @@ public class JournalRepoImpl implements JournalRepo {
     }
 
     @Override
-    public Mono<Page<?>> findByUser(User user, PageRequest pageRequest) {
+    public Mono<Page<Journal>> findByUser(User user, PageRequest pageRequest) {
         log.info("Getting journals for user. User id : {}", user.getId());
         final var countQuery = "SELECT COUNT(*) FROM journal WHERE user_id=:userId";
         final var query = getOrderByQuery(pageRequest, "SELECT id, user_id, content, created, updated FROM journal WHERE user_id=:userId ORDER BY %s %s LIMIT :limit OFFSET :offset");
@@ -66,12 +65,13 @@ public class JournalRepoImpl implements JournalRepo {
                 .all()
                 .collectList()
                 .flatMap(journals ->
-                        count.map(total -> Page.builder()
-                                .pageNumber(pageRequest.getPageNumber())
-                                .pageSize(pageRequest.getPageSize())
-                                .total(total)
-                                .data(map(journals))
-                                .build()));
+                        count.map(total -> new Page<Journal>()
+                                .setPageNumber(pageRequest.getPageNumber())
+                                .setPageSize(pageRequest.getPageSize())
+                                .setTotal(total)
+                                .setData(journals)
+                        )
+                );
     }
 
     @NotNull

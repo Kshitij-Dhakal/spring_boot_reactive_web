@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.api.model.JournalModel;
+import com.example.demo.api.model.Page;
 import com.example.demo.core.exceptions.InvalidRequestException;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
@@ -8,7 +9,6 @@ import com.example.demo.entity.User;
 import com.example.demo.repo.JournalRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -39,7 +39,7 @@ public class JournalService {
         return journalRepo.save(user, build);
     }
 
-    public Mono<?> getMyJournal(User user, PageRequest pageRequest) {
+    public Mono<Page<Journal>> getMyJournal(User user, PageRequest pageRequest) {
         log.info("Getting my journal. User id : {}", user.getId());
         return journalRepo.findByUser(user, pageRequest);
     }

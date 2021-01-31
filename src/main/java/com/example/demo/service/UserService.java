@@ -25,37 +25,36 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Mono<?> signUp(SignUpRequest signUpRequest) {
+    public Mono<UserModel> signUp(SignUpRequest signUpRequest) {
         log.info("Signing up. Email : {}", signUpRequest.getEmail());
         User user = signUpRequest.toUser();
         String email = sanitizeText(user.getEmail());
         return findByEmail(email)
                 .flatMap(__ -> Mono.error(new DuplicateResourceException("Email already exists")))
-                .switchIfEmpty(saveUser(user, email));
+                .switchIfEmpty(saveUser(user, email))
+                .cast(UserModel.class);
     }
 
     private Mono<UserModel> saveUser(User user, String email) {
-        return Mono.defer(() -> {
-            String fullName = sanitizeText(user.getFullName());
-            if (isBlank(fullName) &&
-                    fullName.length() > 256) {
-                return Mono.error(new InvalidRequestException("Invalid user name"));
-            }
-            if (isBlank(email) ||
-                    !isValidEmail(email)) {
-                return Mono.error(new InvalidRequestException("Invalid email"));
-            }
-            User build = user.toBuilder()
-                    .id(uuid())
-                    .fullName(fullName)
-                    .email(email)
-                    .password(passwordEncoder.encode(user.getPassword()))
-                    .created(nanos())
-                    .updated(nanos())
-                    .build();
-            return userRepository.save(build)
-                    .map(UserModel::fromUser);
-        });
+        String fullName = sanitizeText(user.getFullName());
+        if (isBlank(fullName) &&
+                fullName.length() > 256) {
+            return Mono.error(new InvalidRequestException("Invalid user name"));
+        }
+        if (isBlank(email) ||
+                !isValidEmail(email)) {
+            return Mono.error(new InvalidRequestException("Invalid email"));
+        }
+        User build = user.toBuilder()
+                .id(uuid())
+                .fullName(fullName)
+                .email(email)
+                .password(passwordEncoder.encode(user.getPassword()))
+                .created(nanos())
+                .updated(nanos())
+                .build();
+        return userRepository.save(build)
+                .map(UserModel::fromUser);
     }
 
     public Mono<User> findByEmail(String email) {
