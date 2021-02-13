@@ -36,6 +36,18 @@ public class JournalRepoImpl implements JournalRepo {
     }
 
     @Override
+    public Mono<Journal> update(Journal journal) {
+        log.info("Updating journal. Journal id : {}", journal.getId());
+        final var query = "UPDATE journal SET content=:content, updated=:updated WHERE id=:id";
+        return client.sql(query)
+                .bind("content", journal.getContent())
+                .bind("updated", journal.getUpdated())
+                .bind("id", journal.getId())
+                .then()
+                .then(findById(journal.getId()));
+    }
+
+    @Override
     public Mono<Journal> findById(String id) {
         log.info("Getting journal by id. Id : {}", id);
         final var query = "SELECT id, user_id, content, created, updated FROM journal WHERE id=:id";
@@ -57,7 +69,7 @@ public class JournalRepoImpl implements JournalRepo {
         return client.sql(query)
                 .bind("userId", user.getId())
                 .bind("limit", pageRequest.getPageSize())
-                .bind("offset", pageRequest.getPageNumber())
+                .bind("offset", pageRequest.getPageNumber() * pageRequest.getPageSize())
                 .map(JournalMapper::map)
                 .all()
                 .collectList()

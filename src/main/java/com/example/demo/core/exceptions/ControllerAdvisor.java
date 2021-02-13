@@ -38,10 +38,17 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(JwtExpiredExpiration.class)
-    public ResponseEntity<?> tokenExpired(JwtExpiredExpiration ex) {
+    public ResponseEntity<?> tokenExpired() {
         Map<String, Object> error = error();
         error.put("message", "Token expired");
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IllegalActionException.class)
+    public ResponseEntity<?> illegal(IllegalActionException ex) {
+        Map<String, Object> error = error();
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     private Map<String, Object> error() {
