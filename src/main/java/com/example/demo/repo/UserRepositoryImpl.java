@@ -1,15 +1,12 @@
 package com.example.demo.repo;
 
 import com.example.demo.entity.User;
-import io.r2dbc.spi.Row;
+import com.example.demo.repo.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Function;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
-                .map(userRowMapper())
+                .map(UserMapper::map)
                 .first();
     }
 
@@ -48,19 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE email=:email";
         return client.sql(query)
                 .bind("email", email)
-                .map(userRowMapper())
+                .map(UserMapper::map)
                 .first();
-    }
-
-    @NotNull
-    private Function<Row, User> userRowMapper() {
-        return row -> User.builder()
-                .id((String) row.get("id"))
-                .fullName((String) row.get("full_name"))
-                .email((String) row.get("email"))
-                .password((String) row.get("password"))
-                .created((Long) row.get("created"))
-                .updated((Long) row.get("updated"))
-                .build();
     }
 }

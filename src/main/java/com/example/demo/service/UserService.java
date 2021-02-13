@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 import static com.example.demo.core.utility.Lang.isBlank;
 import static com.example.demo.core.utility.Lang.sanitizeText;
-import static com.example.demo.core.utility.Utility.nanos;
+import static com.example.demo.core.utility.TimeUtility.nanos;
 import static com.example.demo.core.utility.Utility.uuid;
 import static com.example.demo.core.utility.Validator.isValidEmail;
 

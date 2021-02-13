@@ -4,15 +4,12 @@ import com.example.demo.api.model.Page;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
-import io.r2dbc.spi.Row;
+import com.example.demo.repo.mapper.JournalMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Function;
 
 import static com.example.demo.core.repo.SqlRepo.count;
 import static com.example.demo.core.repo.SqlRepo.getOrderByQuery;
@@ -44,7 +41,7 @@ public class JournalRepoImpl implements JournalRepo {
         final var query = "SELECT id, user_id, content, created, updated FROM journal WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
-                .map(JournalRowMapper())
+                .map(JournalMapper::map)
                 .first();
     }
 
@@ -61,7 +58,7 @@ public class JournalRepoImpl implements JournalRepo {
                 .bind("userId", user.getId())
                 .bind("limit", pageRequest.getPageSize())
                 .bind("offset", pageRequest.getPageNumber())
-                .map(JournalRowMapper())
+                .map(JournalMapper::map)
                 .all()
                 .collectList()
                 .flatMap(journals ->
@@ -72,15 +69,5 @@ public class JournalRepoImpl implements JournalRepo {
                                 .setData(journals)
                         )
                 );
-    }
-
-    @NotNull
-    private Function<Row, Journal> JournalRowMapper() {
-        return row -> Journal.builder()
-                .id((String) row.get("id"))
-                .content((String) row.get("content"))
-                .created((Long) row.get("created"))
-                .updated((Long) row.get("updated"))
-                .build();
     }
 }
