@@ -2,8 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.api.model.JournalModel;
 import com.example.demo.api.model.Page;
-import com.example.demo.core.exceptions.IllegalActionException;
+import com.example.demo.core.exceptions.FailedException;
 import com.example.demo.core.exceptions.InvalidRequestException;
+import com.example.demo.core.exceptions.NoDataFoundException;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
@@ -41,27 +42,45 @@ public class JournalService {
     }
 
     public Mono<? extends Journal> update(User user, JournalModel journalModel) {
-        log.info("Updating journal. User id : {}", user.getId());
-        Journal journal = journalModel.toJournal();
-        String id = journal.getId();
-        return journalRepo.findById(id)
-                .flatMap(__ -> Mono.error(new IllegalActionException("User is not allowed to update this journal")))
-                .switchIfEmpty(Mono.defer(() -> {
-                    String content = sanitizeDescription(journal.getContent());
+        String id = journalModel.getId();
+        log.info("Updating journal. Journal id : {}", id);
+        return findById(user, id)
+                .flatMap(__ -> {
+                    String content = sanitizeDescription(journalModel.getContent());
                     if (isBlank(content)) {
                         return Mono.error(new InvalidRequestException("Invalid content"));
                     }
+                    Journal journal = journalModel.toJournal();
                     Journal build = journal.toBuilder()
                             .content(content)
                             .updated(nanos())
                             .build();
                     return journalRepo.update(build);
-                }))
+                })
                 .cast(Journal.class);
     }
 
     public Mono<Page<Journal>> findByUser(User user, PageRequest pageRequest) {
         log.info("Getting my journal. User id : {}", user.getId());
         return journalRepo.findByUser(user, pageRequest);
+    }
+
+    public Mono<Journal> findById(final User user, final String id) {
+        log.info("Getting journal. Journal id : {}", id);
+        return journalRepo.findById(id)
+                .filter(dbJournal -> dbJournal.getUserId().equals(user.getId()))
+                .switchIfEmpty(Mono.error(new NoDataFoundException("Journal not found")));
+    }
+
+    public Mono<Boolean> delete(final User user, final String id) {
+        log.info("Getting journal. Journal id : {}", id);
+        return findById(user, id)
+                .flatMap(__ -> journalRepo.delete(id))
+                .map(success -> {
+                    if (!success)
+                        return Mono.error(new FailedException("Failed to delete journal"));
+                    return success;
+                })
+                .cast(Boolean.class);
     }
 }

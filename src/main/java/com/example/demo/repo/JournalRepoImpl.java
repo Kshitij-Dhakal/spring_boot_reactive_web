@@ -1,6 +1,7 @@
 package com.example.demo.repo;
 
 import com.example.demo.api.model.Page;
+import com.example.demo.core.exceptions.FailedException;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
@@ -31,8 +32,14 @@ public class JournalRepoImpl implements JournalRepo {
                 .bind("content", journal.getContent())
                 .bind("created", journal.getCreated())
                 .bind("updated", journal.getUpdated())
-                .then()
-                .then(findById(journal.getId()));
+                .fetch()
+                .rowsUpdated()
+                .flatMap(rowsUpdated -> {
+                    if (rowsUpdated == 1)
+                        return findById(journal.getId());
+                    else
+                        return Mono.error(new FailedException("Failed to save journal"));
+                });
     }
 
     @Override
@@ -43,8 +50,14 @@ public class JournalRepoImpl implements JournalRepo {
                 .bind("content", journal.getContent())
                 .bind("updated", journal.getUpdated())
                 .bind("id", journal.getId())
-                .then()
-                .then(findById(journal.getId()));
+                .fetch()
+                .rowsUpdated()
+                .flatMap(rowsUpdated -> {
+                    if (rowsUpdated == 1)
+                        return findById(journal.getId());
+                    else
+                        return Mono.error(new FailedException("Failed to update journal"));
+                });
     }
 
     @Override
@@ -82,4 +95,16 @@ public class JournalRepoImpl implements JournalRepo {
                         )
                 );
     }
+
+    @Override
+    public Mono<Boolean> delete(String id) {
+        log.info("Deleting journal. Journal id : {}", id);
+        final var query = "DELETE FROM journal WHERE id=:id";
+        return client.sql(query)
+                .bind("id", id)
+                .fetch()
+                .rowsUpdated()
+                .map(integer -> integer == 1);
+    }
+
 }

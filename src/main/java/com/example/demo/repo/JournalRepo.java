@@ -15,4 +15,5 @@ public interface JournalRepo {
 
     Mono<Page<Journal>> findByUser(User user, PageRequest pageRequest);
 
+    Mono<Boolean> delete(String id);
 }

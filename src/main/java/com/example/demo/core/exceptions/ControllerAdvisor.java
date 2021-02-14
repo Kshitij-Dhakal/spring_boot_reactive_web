@@ -51,6 +51,13 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(FailedException.class)
+    public ResponseEntity<?> failed(FailedException ex) {
+        Map<String, Object> error = error();
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private Map<String, Object> error() {
         Map<String, Object> map = Maps.newLinkedHashMap();
         map.put("error", true);

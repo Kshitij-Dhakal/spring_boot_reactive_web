@@ -13,6 +13,7 @@ public class JournalMapper {
                 .content((String) row.get("content"))
                 .created((Long) row.get("created"))
                 .updated((Long) row.get("updated"))
+                .userId((String) row.get("user_id"))
                 .build();
     }
 }
