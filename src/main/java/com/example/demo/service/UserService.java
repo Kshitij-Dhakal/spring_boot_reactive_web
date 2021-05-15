@@ -5,18 +5,18 @@ import com.example.demo.api.model.UserModel;
 import com.example.demo.core.exceptions.DuplicateResourceException;
 import com.example.demo.core.exceptions.InvalidRequestException;
 import com.example.demo.entity.User;
-import com.example.demo.repo.UserRepository;
+import com.example.demo.db.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static com.example.demo.core.utility.Lang.isBlank;
-import static com.example.demo.core.utility.Lang.sanitizeText;
-import static com.example.demo.core.utility.TimeUtility.nanos;
-import static com.example.demo.core.utility.Utility.uuid;
-import static com.example.demo.core.utility.Validator.isValidEmail;
+import static com.example.demo.core.util.StringUtils.isBlank;
+import static com.example.demo.core.util.StringUtils.sanitizeText;
+import static com.example.demo.core.util.TimeUtils.nanos;
+import static com.example.demo.core.util.JournalUtils.uuid;
+import static com.example.demo.core.util.Validator.isValidEmail;
 
 @Service
 @RequiredArgsConstructor

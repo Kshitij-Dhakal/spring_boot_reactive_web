@@ -1,7 +1,7 @@
-package com.example.demo.repo;
+package com.example.demo.db.repo;
 
 import com.example.demo.entity.User;
-import com.example.demo.repo.mapper.UserMapper;
+import com.example.demo.db.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
-                .map(UserMapper::map)
+                .map(new UserMapper())
                 .first();
     }
 
@@ -45,7 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
         final var query = "SELECT id, full_name, email, password, created, updated FROM person WHERE email=:email";
         return client.sql(query)
                 .bind("email", email)
-                .map(UserMapper::map)
+                .map(new UserMapper())
                 .first();
     }
 }

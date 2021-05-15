@@ -3,8 +3,8 @@ package com.example.demo.service;
 import com.example.demo.api.model.LoginRequest;
 import com.example.demo.core.exceptions.InvalidRequestException;
 import com.example.demo.entity.User;
-import com.example.demo.repo.AuthRepo;
-import com.example.demo.repo.UserRepository;
+import com.example.demo.db.repo.AuthRepo;
+import com.example.demo.db.repo.UserRepository;
 import com.example.demo.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
-import static com.example.demo.core.utility.Security.secureRandom;
+import static com.example.demo.core.util.SecurityUtils.secureRandom;
 
 @Service
 @RequiredArgsConstructor

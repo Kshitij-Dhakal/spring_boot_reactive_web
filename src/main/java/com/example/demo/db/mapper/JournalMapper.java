@@ -1,13 +1,11 @@
-package com.example.demo.repo.mapper;
+package com.example.demo.db.mapper;
 
+import com.example.demo.core.type.RowMapper;
 import com.example.demo.entity.Journal;
 import io.r2dbc.spi.Row;
 
-public class JournalMapper {
-    private JournalMapper() {
-    }
-
-    public static Journal map(Row row) {
+public class JournalMapper implements RowMapper<Journal> {
+    public Journal map(Row row) {
         return Journal.builder()
                 .id((String) row.get("id"))
                 .content((String) row.get("content"))

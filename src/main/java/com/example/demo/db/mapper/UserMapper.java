@@ -1,15 +1,11 @@
-package com.example.demo.repo.mapper;
+package com.example.demo.db.mapper;
 
+import com.example.demo.core.type.RowMapper;
 import com.example.demo.entity.User;
 import io.r2dbc.spi.Row;
-import org.jetbrains.annotations.NotNull;
 
-public class UserMapper {
-    private UserMapper() {
-    }
-
-    @NotNull
-    public static User map(Row row) {
+public class UserMapper implements RowMapper<User> {
+    public User map(Row row) {
         return User.builder()
                 .id((String) row.get("id"))
                 .fullName((String) row.get("full_name"))

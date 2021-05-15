@@ -1,4 +1,4 @@
-package com.example.demo.repo;
+package com.example.demo.db.repo;
 
 import reactor.core.publisher.Mono;
 

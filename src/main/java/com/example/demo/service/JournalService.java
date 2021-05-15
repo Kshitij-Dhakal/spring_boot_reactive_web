@@ -8,16 +8,16 @@ import com.example.demo.core.exceptions.NoDataFoundException;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
-import com.example.demo.repo.JournalRepo;
+import com.example.demo.db.repo.JournalRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static com.example.demo.core.utility.Lang.isBlank;
-import static com.example.demo.core.utility.Lang.sanitizeDescription;
-import static com.example.demo.core.utility.TimeUtility.nanos;
-import static com.example.demo.core.utility.Utility.uuid;
+import static com.example.demo.core.util.StringUtils.isBlank;
+import static com.example.demo.core.util.StringUtils.sanitizeDescription;
+import static com.example.demo.core.util.TimeUtils.nanos;
+import static com.example.demo.core.util.JournalUtils.uuid;
 
 @Service
 @Slf4j
@@ -79,7 +79,7 @@ public class JournalService {
                 .map(success -> {
                     if (!success)
                         return Mono.error(new FailedException("Failed to delete journal"));
-                    return success;
+                    return true;
                 })
                 .cast(Boolean.class);
     }

@@ -1,9 +1,10 @@
-package com.example.demo.core.utility;
+package com.example.demo.core.util;
 
 import java.util.UUID;
 
-public class Utility {
-    private Utility() {
+public class JournalUtils {
+    private JournalUtils() {
+        //no instance
     }
 
     public static String uuid() {

@@ -1,9 +1,8 @@
-package com.example.demo.core.utility;
+package com.example.demo.core.util;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class Lang {
-    private Lang() {
+public class StringUtils {
+    private StringUtils() {
+        //no instance
     }
 
     public static String sanitizeText(String str) {
@@ -21,7 +20,7 @@ public class Lang {
     }
 
     public static boolean isBlank(String str) {
-        return StringUtils.isBlank(str);
+        return org.apache.commons.lang3.StringUtils.isBlank(str);
     }
 
     public static boolean isNotBlank(String str) {

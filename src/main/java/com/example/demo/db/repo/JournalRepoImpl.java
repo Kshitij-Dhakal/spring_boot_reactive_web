@@ -1,24 +1,22 @@
-package com.example.demo.repo;
+package com.example.demo.db.repo;
 
 import com.example.demo.api.model.Page;
 import com.example.demo.core.exceptions.FailedException;
+import com.example.demo.core.repo.AbstractSqlRepo;
+import com.example.demo.db.mapper.JournalMapper;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.entity.User;
-import com.example.demo.repo.mapper.JournalMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-import static com.example.demo.core.repo.SqlRepo.count;
-import static com.example.demo.core.repo.SqlRepo.getOrderByQuery;
-
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class JournalRepoImpl implements JournalRepo {
+public class JournalRepoImpl extends AbstractSqlRepo implements JournalRepo {
 
     private final DatabaseClient client;
 
@@ -66,7 +64,7 @@ public class JournalRepoImpl implements JournalRepo {
         final var query = "SELECT id, user_id, content, created, updated FROM journal WHERE id=:id";
         return client.sql(query)
                 .bind("id", id)
-                .map(JournalMapper::map)
+                .map(new JournalMapper())
                 .first();
     }
 
@@ -83,7 +81,7 @@ public class JournalRepoImpl implements JournalRepo {
                 .bind("userId", user.getId())
                 .bind("limit", pageRequest.getPageSize())
                 .bind("offset", pageRequest.getPageNumber() * pageRequest.getPageSize())
-                .map(JournalMapper::map)
+                .map(new JournalMapper())
                 .all()
                 .collectList()
                 .flatMap(journals ->

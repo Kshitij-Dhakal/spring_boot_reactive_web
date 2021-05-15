@@ -28,8 +28,7 @@ public class SecurityUserDetailService implements ReactiveUserDetailsService {
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            //noinspection unchecked
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         @Override

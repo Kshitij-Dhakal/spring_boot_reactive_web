@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
-import static com.example.demo.core.utility.TimeUtility.timestamp;
+import static com.example.demo.core.util.TimeUtils.timestamp;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)

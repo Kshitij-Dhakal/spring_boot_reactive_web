@@ -19,6 +19,7 @@ public class PageRequest {
     private String query = "";
 
     public static PageRequestBuilder builder() {
+        //todo find better approach to passing builder default
         return new PageRequest().toBuilder();
     }
 }
