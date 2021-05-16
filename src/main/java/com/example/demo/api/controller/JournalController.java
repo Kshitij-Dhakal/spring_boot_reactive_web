@@ -1,6 +1,7 @@
 package com.example.demo.api.controller;
 
 import com.example.demo.api.model.JournalModel;
+import com.example.demo.api.model.Page;
 import com.example.demo.entity.Journal;
 import com.example.demo.entity.PageRequest;
 import com.example.demo.enums.Order;
@@ -10,13 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.example.demo.api.controller.ControllerUtility.authorized;
-import static com.example.demo.api.controller.ControllerUtility.deleted;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/journal")
 @RequiredArgsConstructor
-public class JournalController {
+public class JournalController extends AbstractController {
     private final JournalService journalService;
 
     @PostMapping
@@ -32,10 +32,10 @@ public class JournalController {
     }
 
     @GetMapping("/my")
-    public Mono<?> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") final long pageNumber,
-                                @RequestParam(value = "pageSize", defaultValue = "10") final long pageSize,
-                                @RequestParam(value = "order", defaultValue = "DESC") final Order order,
-                                @RequestParam(value = "orderBy", defaultValue = "created") final String sortBy) {
+    public Mono<Page<Journal>> getMyJournal(@RequestParam(value = "pageNumber", defaultValue = "0") final long pageNumber,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") final long pageSize,
+                                            @RequestParam(value = "order", defaultValue = "DESC") final Order order,
+                                            @RequestParam(value = "orderBy", defaultValue = "created") final String sortBy) {
         return authorized(user -> journalService.findByUser(user, PageRequest.builder()
                 .pageNumber(pageNumber)
                 .pageSize(pageSize)
@@ -51,8 +51,8 @@ public class JournalController {
     }
 
     @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<?>> delete(@PathVariable("id") final String id) {
+    public Mono<ResponseEntity<Map<String, Boolean>>> delete(@PathVariable("id") final String id) {
         return authorized(user -> journalService.delete(user, id))
-                .map(__ -> deleted());
+                .map(aBoolean -> deleted());
     }
 }

@@ -41,17 +41,17 @@ public class JournalService {
         return journalRepo.save(user, build);
     }
 
-    public Mono<? extends Journal> update(User user, JournalModel journalModel) {
+    public Mono<Journal> update(User user, JournalModel journalModel) {
         String id = journalModel.getId();
         log.info("Updating journal. Journal id : {}", id);
         return findById(user, id)
-                .flatMap(__ -> {
+                .flatMap(journal -> {
                     String content = sanitizeDescription(journalModel.getContent());
                     if (isBlank(content)) {
                         return Mono.error(new InvalidRequestException("Invalid content"));
                     }
-                    Journal journal = journalModel.toJournal();
-                    Journal build = journal.toBuilder()
+                    Journal build = journalModel.toJournal()
+                            .toBuilder()
                             .content(content)
                             .updated(nanos())
                             .build();
@@ -75,7 +75,7 @@ public class JournalService {
     public Mono<Boolean> delete(final User user, final String id) {
         log.info("Getting journal. Journal id : {}", id);
         return findById(user, id)
-                .flatMap(__ -> journalRepo.delete(id))
+                .flatMap(journal -> journalRepo.delete(id))
                 .map(success -> {
                     if (!success)
                         return Mono.error(new FailedException("Failed to delete journal"));

@@ -10,8 +10,8 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ControllerUtility {
-    public static <T> Mono<? extends T> authorized(Function<User, Mono<? extends T>> f) {
+public abstract class AbstractController {
+    protected <T> Mono<T> authorized(Function<User, Mono<? extends T>> f) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(Authentication::getPrincipal)
@@ -21,7 +21,7 @@ public class ControllerUtility {
                 });
     }
 
-    public static ResponseEntity<Map<String, ?>> deleted() {
+    protected ResponseEntity<Map<String, Boolean>> deleted() {
         return ResponseEntity.ok(Map.of("success", true));
     }
 }
